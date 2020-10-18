@@ -94,23 +94,24 @@ class Matrica:
         
     def __invert__(self):
         if abs(self.det()) < self.epsilon:
-            print("Determinanta je nula, ova matrica nema inverz.")
-            
-            jedinicna_matrica = Matrica(self.br_red, self.br_stup, True)
-            inverz_matrice = Matrica(self.br_red, self.br_stup)
-            
-            for i in range(self.br_red):
-                stupac = jedinicna_matrica.dohvati_stupac(i)
-                konstante = [[x] for x in stupac]
-                    
-                vektor_konstanti = Matrica(self.br_red, 1, False, konstante)
-                stupac_inverza = self.rijesi_jednadzbu(vektor_konstanti)
+            raise Exception("Determinanta je nula, ova matrica nema inverz.")
+            return
+        
+        jedinicna_matrica = Matrica(self.br_red, self.br_stup, True)
+        inverz_matrice = Matrica(self.br_red, self.br_stup)
+        
+        for i in range(self.br_red):
+            stupac = jedinicna_matrica.dohvati_stupac(i)
+            konstante = [[x] for x in stupac]
                 
-                if stupac_inverza is None:
-                    raise Exception("Matrica nema inverz.")
-                    return
-                else:
-                    inverz_matrice.postavi_stupac(i, stupac_inverza.elementi)
+            vektor_konstanti = Matrica(self.br_red, 1, False, konstante)
+            stupac_inverza = self.rijesi_jednadzbu(vektor_konstanti)
+            
+            if stupac_inverza is None:
+                raise Exception("Matrica nema inverz.")
+                return
+            else:
+                inverz_matrice.postavi_stupac(i, stupac_inverza.elementi)
         
         return inverz_matrice
                     

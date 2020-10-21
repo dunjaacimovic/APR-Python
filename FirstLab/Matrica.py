@@ -136,7 +136,7 @@ class Matrica:
         else:
             det *= -1
         
-        if det < self.epsilon: return 0
+        if abs(det) < self.epsilon: return 0
         else: return det
     
     
@@ -199,6 +199,8 @@ class Matrica:
     def supst_unazad(self, y):
         x = y.elementi.copy()
         for i in reversed(range(self.br_red)):
+            if abs(self.elementi[i][i]) <= self.epsilon:
+                raise Exception("Dijeljenje s nulom.")
             x[i] = x[i] / self.elementi[i][i]
             if(i <= 0): break
             for j in range(i):
@@ -212,7 +214,7 @@ class Matrica:
         matrica = self
         for i in range(matrica.br_red-1):
             for j in range(i+1, self.br_red):
-                if matrica.elementi[i][i] == 0:
+                if abs(matrica.elementi[i][i]) <= self.epsilon:
                     raise Exception("Pivot je nula.")
                     
                 matrica.elementi[j][i] = matrica.elementi[j][i] / matrica.elementi[i][i]
@@ -241,7 +243,7 @@ class Matrica:
                 br_permutacija += 1
         
             for j in range(i+1, self.br_red):
-                if matrica.elementi[i][i] == 0:
+                if abs(matrica.elementi[i][i]) <= self.epsilon:
                     raise Exception("Pivot je nula.")
                 
 #                print(matrica.elementi[j][i], matrica.elementi[i][i])

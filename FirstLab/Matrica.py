@@ -14,11 +14,7 @@ class Matrica:
             self.elementi = np.zeros((br_red, br_stup))
         else:
             self.elementi = np.array(elementi)
-        
-#         if identity == True:
-#             for i in range(br_red):
-#                 self.elementi[i][i] = 1.0
-    
+            
     
 #    - ADD, SUB, MUL AND DIV -
 
@@ -114,9 +110,9 @@ class Matrica:
                 inverz_matrice.postavi_stupac(i, stupac_inverza.elementi)
         
         return inverz_matrice
-                    
-       
-#    - OSTALE METODE -
+         
+        
+#     - OSTALE METODE -
             
     def transponiraj(self):
         result = Matrica(self.br_red, self.br_stup)

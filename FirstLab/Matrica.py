@@ -5,7 +5,7 @@ class Matrica:
     
 #    - INCIJALIZACIJA -
     
-    def __init__ (self, br_red, br_stup, identity = False, elementi = None):
+    def __init__ (self, br_red, br_stup, elementi = None):
         self.br_red = br_red
         self.br_stup = br_stup
         self.epsilon = 1e-7
@@ -15,15 +15,15 @@ class Matrica:
         else:
             self.elementi = np.array(elementi)
         
-        if identity == True:
-            for i in range(br_red):
-                self.elementi[i][i] = 1.0
+#         if identity == True:
+#             for i in range(br_red):
+#                 self.elementi[i][i] = 1.0
     
     
 #    - ADD, SUB, MUL AND DIV -
 
     def __add__(self, other):
-        result = Matrica(self.br_red, self.br_stup, False)
+        result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             z = list(zip(self.elementi[i], other.elementi[i]))
             m = list(map(sum, z))
@@ -31,7 +31,7 @@ class Matrica:
         return result
     
     def __sub__(self, other):
-        result = Matrica(self.br_red, self.br_stup, False)
+        result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             z = list(zip(self.elementi[i], other.elementi[i]))
             m = [pair[0] - pair[1] for pair in z]
@@ -41,13 +41,13 @@ class Matrica:
     def __mul__(self, other):
         t = type(other)
         if (t == int or t == float):
-            result = Matrica(self.br_red, self.br_stup, False)
+            result = Matrica(self.br_red, self.br_stup)
             for i in range(self.br_red):
                 m = [x * other for x in self.elementi[i]]
                 result.elementi[i] = m
             return result
         else:
-            result = Matrica(self.br_red, other.br_stup, False)
+            result = Matrica(self.br_red, other.br_stup)
             for i in range(self.br_red):
                 resultRow = []
                 for j in range(other.br_stup):
@@ -59,7 +59,7 @@ class Matrica:
         return result
     
     def __div__(self, other):
-        result = Matrica(self.br_red, self.br_stup, False)
+        result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             m = [x / other for x in self.elementi[i]]
             result.elementi[i] = m
@@ -97,14 +97,14 @@ class Matrica:
             raise Exception("Determinanta je nula, ova matrica nema inverz.")
             return
         
-        jedinicna_matrica = Matrica(self.br_red, self.br_stup, True)
+        jedinicna_matrica = JedinicnaMatrica(self.br_red, self.br_stup)
         inverz_matrice = Matrica(self.br_red, self.br_stup)
         
         for i in range(self.br_red):
             stupac = jedinicna_matrica.dohvati_stupac(i)
             konstante = [[x] for x in stupac]
                 
-            vektor_konstanti = Matrica(self.br_red, 1, False, konstante)
+            vektor_konstanti = Matrica(self.br_red, 1, konstante)
             stupac_inverza = self.rijesi_jednadzbu(vektor_konstanti)
             
             if stupac_inverza is None:
@@ -119,7 +119,7 @@ class Matrica:
 #    - OSTALE METODE -
             
     def transponiraj(self):
-        result = Matrica(self.br_red, self.br_stup, False)
+        result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             for j in range(self.br_stup):
                 result.elementi[i][j] = self.elementi[j][i]
@@ -141,7 +141,7 @@ class Matrica:
     
     
     def U(self):
-        u = Matrica(br_red, br_stup, False)
+        u = Matrica(br_red, br_stup)
         
         for i in range(self.br_red):
             for j in range(self.br_stup):
@@ -151,7 +151,7 @@ class Matrica:
                     u.elementi[i][j] = 0.0
         
     def L(self):
-        l = Matrica(br_red, br_stup, False)
+        l = Matrica(br_red, br_stup)
         
         for i in range(self.br_red):
             for j in range(self.br_stup):
@@ -194,7 +194,7 @@ class Matrica:
         for i in range(self.br_red-1):
             for j in range(i+1, self.br_red):
                 y[j][0] -= self.elementi[j][i] * y[i][0]
-        return Matrica(b.br_red, 1, False, y)
+        return Matrica(b.br_red, 1, y)
     
     def supst_unazad(self, y):
         x = y.elementi.copy()
@@ -205,7 +205,7 @@ class Matrica:
             if(i <= 0): break
             for j in range(i):
                 x[j][0] -= self.elementi[j][i] * x[i][0]
-        return Matrica(y.br_red, 1, False, x)
+        return Matrica(y.br_red, 1, x)
     
     
 #    - DEKOMPOZICIJA -
@@ -269,7 +269,7 @@ class Matrica:
             redak[i] = 1.0
             elem.append(redak)
         
-        return Matrica(br_pivota, br_pivota, False, elem)
+        return Matrica(br_pivota, br_pivota, elem)
 
     def rijesi_jednadzbu(self, vektor_konstanti, lup = True, rounded = True):
         
@@ -315,7 +315,7 @@ class Matrica:
             e = [float(x) for x in red.strip().split()]
             elem.append(e)
 
-        return Matrica(br_red, br_stup, False, elem)
+        return Matrica(br_red, br_stup, elem)
     
     def pisi_u(self, datoteka):
         izlaz = open("zadatci/" + datoteka, "w")
@@ -326,3 +326,16 @@ class Matrica:
             redovi += "\n"
         izlaz.write(redovi)
         izlaz.close()
+        
+        
+        
+
+# - JEDINICNA MATRICA -
+
+class JedinicnaMatrica(Matrica):
+    
+    def __init__(self, br_red, br_stup):
+        super().__init__(br_red, br_stup)
+        
+        for i in range(br_red):
+            self.elementi[i][i] = 1.0

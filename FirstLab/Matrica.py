@@ -72,6 +72,23 @@ class Matrica:
     
     def __idiv__(self, other):
         return self / other
+
+#     - SUBSCRIPT -
+    
+    """Returns a row for an integer or an element for a tuple."""
+
+    def __getitem__(self, key):
+        return self.elementi[key]
+    
+    def __setitem__(self, key, value):
+        self.elementi[key] = value
+    
+    def __delitem__(self, key):
+        novi_elementi = np.delete(self.elementi, key, 0)
+        self.elementi = novi_elementi
+        self.br_red -= 1
+        
+    
         
 #    - OSTALE OVERLOADANE METODE -
 
@@ -166,6 +183,11 @@ class Matrica:
     
     def copy(self):
         return Matrica(self.br_red, self.br_stup, self.elementi.deepCopy())
+    
+    def izbrisi_redak(self, i):
+        novi_elementi = np.delete(self.elementi, i, 0)
+        self.elementi = novi_elementi
+        self.br_red -= 1
         
     
 #    - STUPCI -

@@ -21,44 +21,108 @@ class Matrica:
     def __add__(self, other):
         result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
-            z = list(zip(self.elementi[i], other.elementi[i]))
-            m = list(map(sum, z))
-            result.elementi[i] = m
+            try: 
+                z = list(zip(self.elementi[i], other.elementi[i]))
+                m = list(map(sum, z))
+                result.elementi[i] = m
+            except TypeError:
+                z = list(zip(self.elementi, other.elementi))
+                print(z)
+                m = list(map(sum, z))
+                print(m)
+                result.elementi = np.array(m)
+#                 m = []
+#                 for j in range(self.br_stup): 
+#                     m.append(self.elementi[j] + other.elementi[j])
+            
         return result
     
     def __sub__(self, other):
         result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
-            z = list(zip(self.elementi[i], other.elementi[i]))
+            try: 
+                z = list(zip(self.elementi[i], other.elementi[i]))
+            except TypeError:
+                z = list(zip(self.elementi, other.elementi))
             m = [pair[0] - pair[1] for pair in z]
             result.elementi[i] = m
         return result
     
     def __mul__(self, other):
-        t = type(other)
-        if (t == int or t == float):
-            result = Matrica(self.br_red, self.br_stup)
-            for i in range(self.br_red):
-                m = [x * other for x in self.elementi[i]]
-                result.elementi[i] = m
-            return result
-        else:
-            result = Matrica(self.br_red, other.br_stup)
-            for i in range(self.br_red):
-                resultRow = []
-                for j in range(other.br_stup):
-                    stupac = other.dohvati_stupac(j)
-                    z = list(zip(self.elementi[i], stupac))
+        
+        try:
+            t = type(other)
+            if (t == int or t == float):
+                result = Matrica(self.br_red, self.br_stup)
+                for i in range(self.br_red):
+                    m = [x * other for x in self.elementi[i]]
+                    result.elementi[i] = m
+                return result
+            else:
+                if self.br_stup != other.br_red:
+                    raise Exception("Pogrešne dimenzije matrica.")
+                result = Matrica(self.br_red, other.br_stup)
+                for i in range(self.br_red):
+                    resultRow = []
+                    for j in range(other.br_stup):
+                        stupac = other.dohvati_stupac(j)
+                        z = list(zip(self.elementi[i], stupac))
+                        m = [pair[0]*pair[1] for pair in z]
+                        resultRow.append(sum(m))
+                    result.elementi[i] = resultRow
+                return result
+        except (TypeError, IndexError) as e:
+            t = type(other)
+            if (t == int or t == float):
+                result = Matrica(self.br_red, self.br_stup)
+                for i in range(self.br_red):
+                    m = [x * other for x in self.elementi]
+                    result.elementi[i] = m
+                return result
+            else:
+                if self.br_stup != other.br_red:
+                    raise Exception("Pogrešne dimenzije matrica.")
+                result = Matrica(self.br_red, other.br_stup)
+                result_row = []
+                
+                if self.br_red == 1 and other.br_stup != 1:
+                    for i in range(other.br_stup):
+                        z = list(zip(self.elementi, other.dohvati_stupac(i)))
+                        m = [pair[0]*pair[1] for pair in z]
+                        result_row.append(sum(m))
+                    result.elementi = result_row
+
+                elif self.br_red != 1 and other.br_stup == 1:
+                    for i in range(self.br_red):
+                        z = list(zip(self.elementi[i], other.elementi))
+                        m = [pair[0]*pair[1] for pair in z]
+                        result_row.append(sum(m))
+                    result.elementi = result_row
+                    
+                elif self.br_red == 1 and other.br_stup == 1:
+                    z = list(zip(self.elementi, other.elementi))
                     m = [pair[0]*pair[1] for pair in z]
-                    resultRow.append(sum(m))
-                result.elementi[i] = resultRow
-        return result
+                    result.elementi = sum(m)
+                    
+                elif self.br_stup == 1 and other.br_red == 1:
+                    for i in range(self.br_red):
+                        result.elementi[i] = other.elementi*self.elementi[i]
+                return result
+        
+    def __rmul__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return Matrica.__mul__(self, other)
     
-    def __div__(self, other):
+    def __truediv__(self, other):
         result = Matrica(self.br_red, self.br_stup)
-        for i in range(self.br_red):
-            m = [x / other for x in self.elementi[i]]
-            result.elementi[i] = m
+        try:
+            for i in range(self.br_red):
+                m = [x / other for x in self.elementi[i]]
+                result.elementi[i] = m
+        except TypeError: 
+            for i in range(self.br_red):
+                m = [x / other for x in self.elementi]
+                result.elementi[i] = m
         return result
     
     def __iadd__(self, other):

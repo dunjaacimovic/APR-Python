@@ -1,0 +1,1 @@
+Rjesenje vjezbe se nalazi u Jupyter biljeznici.

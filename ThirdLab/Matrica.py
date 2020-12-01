@@ -13,7 +13,7 @@ class Matrica:
         if elementi is None:
             self.elementi = np.zeros((br_red, br_stup))
         else:
-            print("__init__ elementi: ", elementi)
+            # print("__init__ elementi: ", elementi)
             self.elementi = np.array(elementi, dtype=float)
         
 #         if elementi is None :
@@ -180,8 +180,8 @@ class Matrica:
         return not self.__eq__(other)
     
     def __str__(self):
-#         return f'{self.elementi + "hello"}'
-        
+        return f'{self.elementi}'
+
     def __invert__(self):
         if abs(self.det()) < self.epsilon:
             raise Exception("Determinanta je nula, ova matrica nema inverz.")
@@ -209,9 +209,9 @@ class Matrica:
 #     - OSTALE METODE -
             
     def transponiraj(self):
-        result = Matrica(self.br_red, self.br_stup)
-        for i in range(self.br_red):
-            for j in range(self.br_stup):
+        result = Matrica(self.br_stup, self.br_red)
+        for i in range(result.br_red):
+            for j in range(result.br_stup):
                 result.elementi[i][j] = self.elementi[j][i]
         return result
         

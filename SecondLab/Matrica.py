@@ -9,48 +9,47 @@ class Matrica:
         self.br_red = br_red
         self.br_stup = br_stup
         self.epsilon = 1e-7
-        
-        if elementi is None :
+    
+        if elementi is None:
             self.elementi = np.zeros((br_red, br_stup))
-        elif formatirano: 
-            self.elementi = np.array(elementi, dtype=float)
         else:
-            if br_red != 1 and br_stup == 1:
-                stupac = []
-                for i in elementi:
-                    stupac.append([i])
-                self.elementi = np.array(stupac, dtype=float)
-            elif br_red == 1:
-                self.elementi = np.array([elementi], dtype=float)
-            else: 
-                self.elementi = np.array(elementi, dtype=float)
-            
+            try:
+                test = elementi[0][0]
+            except:
+                raise Exception("Elementi matrice trebaju biti u 2D matrici.")
+            self.elementi = np.array(elementi, dtype=float)
     
 #    - ADD, SUB, MUL AND DIV -
 
     def __add__(self, other):
+        
+        #Provjera dimenzija
+        if(self.br_red != other.br_red or \
+           self.br_stup != other.br_stup or \
+           len(self.elementi.flatten()) != len(other.elementi.flatten())):
+            raise Exception("Pogrešne dimenzije matrica. Lijeva je dimenzija {0}, a desna {1}.".format(\
+            (self.br_red, self.br_stup), (other.br_red, other.br_stup)))
+            
+        
         result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             z = list(zip(self.elementi[i], other.elementi[i]))
             m = list(map(sum, z))
             result.elementi[i] = m
-#             except TypeError:
-#                 z = list(zip(self.elementi, other.elementi))
-#                 print(z)
-#                 m = list(map(sum, z))
-#                 print(m)
-#                 result.elementi = np.array(m)
-#                 m = []
-#                 for j in range(self.br_stup): 
-#                     m.append(self.elementi[j] + other.elementi[j])
         return result
     
     def __sub__(self, other):
+        
+        #Provjera dimenzija
+        if(self.br_red != other.br_red or \
+           self.br_stup != other.br_stup or \
+           len(self.elementi.flatten()) != len(other.elementi.flatten())):
+            raise Exception("Pogrešne dimenzije matrica. Lijeva je dimenzija {0}, a desna {1}.".format(\
+                (self.br_red, self.br_stup), (other.br_red, other.br_stup)))
+        
         result = Matrica(self.br_red, self.br_stup)
         for i in range(self.br_red):
             z = list(zip(self.elementi[i], other.elementi[i]))
-#             except TypeError:
-#                 z = list(zip(self.elementi, other.elementi))
             m = [pair[0] - pair[1] for pair in z]
             result.elementi[i] = m
         return result
@@ -58,7 +57,7 @@ class Matrica:
     def __mul__(self, other):
         
         t = type(other)
-        if (t == int or t == float):
+        if (t == int or t == float or t == np.float64):
             result = Matrica(self.br_red, self.br_stup)
             for i in range(self.br_red):
                 m = [x * other for x in self.elementi[i]]
@@ -66,8 +65,11 @@ class Matrica:
                 result.elementi[i] = m
             return result
         else:
-            if self.br_stup != other.br_red:
-                raise Exception("Pogrešne dimenzije matrica.")
+            #Provjera dimenzija
+            if(self.br_stup != other.br_red or len(self.elementi[0]) != len(other.elementi)):
+                raise Exception("Pogrešne dimenzije matrica. Lijeva je dimenzija {0}, a desna {1}.".format(\
+                (self.br_red, self.br_stup), (other.br_red, other.br_stup)))
+                
             result = Matrica(self.br_red, other.br_stup)
             for i in range(self.br_red):
                 resultRow = []
@@ -78,43 +80,6 @@ class Matrica:
                     resultRow.append(sum(m))
                 result.elementi[i] = resultRow
             return result
-#         except (TypeError, IndexError) as e:
-#             t = type(other)
-#             if (t == int or t == float):
-#                 result = Matrica(self.br_red, self.br_stup)
-#                 for i in range(self.br_red):
-#                     m = [x * other for x in self.elementi]
-#                     result.elementi[i] = m
-#                 return result
-#             else:
-#                 if self.br_stup != other.br_red:
-#                     raise Exception("Pogrešne dimenzije matrica.")
-#                 result = Matrica(self.br_red, other.br_stup)
-#                 result_row = []
-                
-#                 if self.br_red == 1 and other.br_stup != 1:
-#                     for i in range(other.br_stup):
-#                         z = list(zip(self.elementi, other.dohvati_stupac(i)))
-#                         m = [pair[0]*pair[1] for pair in z]
-#                         result_row.append(sum(m))
-#                     result.elementi = result_row
-
-#                 elif self.br_red != 1 and other.br_stup == 1:
-#                     for i in range(self.br_red):
-#                         z = list(zip(self.elementi[i], other.elementi))
-#                         m = [pair[0]*pair[1] for pair in z]
-#                         result_row.append(sum(m))
-#                     result.elementi = result_row
-                    
-#                 elif self.br_red == 1 and other.br_stup == 1:
-#                     z = list(zip(self.elementi, other.elementi))
-#                     m = [pair[0]*pair[1] for pair in z]
-#                     result.elementi = sum(m)
-                    
-#                 elif self.br_stup == 1 and other.br_red == 1:
-#                     for i in range(self.br_red):
-#                         result.elementi[i] = other.elementi*self.elementi[i]
-#                 return result
         
     def __rmul__(self, other):
         if isinstance(other, int) or isinstance(other, float):
@@ -415,8 +380,6 @@ class Matrica:
             redovi += "\n"
         izlaz.write(redovi)
         izlaz.close()
-        
-        
         
 
 # - JEDINICNA MATRICA -

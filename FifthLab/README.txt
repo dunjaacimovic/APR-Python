@@ -1,0 +1,1 @@
+Potrebno je samo otvoriti i pokrenuti celije u Jupyter Notebooku "AnalizaPrijelaznihPojava.ipynb".

@@ -378,13 +378,13 @@ class Funkcija:
         sel1.br_poziva = 0
     
     def vrijednost(self, x):
+        self.br_poziva += 1
         try:
 #             print("self.vrijednosti: ", self.vrijednosti)
 #             print("str x:", str(x))
             return self.vrijednosti[str(x)]
         except: 
             nova_vrijednost = self.f(x)
-            self.br_poziva += 1
             self.vrijednosti[str(x)] = nova_vrijednost
             return nova_vrijednost
 
